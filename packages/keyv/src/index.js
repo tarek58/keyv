@@ -73,7 +73,12 @@ class Keyv extends EventEmitter {
 				}
 
 				if (typeof data.expires === 'number' && Date.now() > data.expires) {
-					this.delete(key);
+					// `key` is the raw key from the store, which is
+					// already prefixed.
+					// Calling `delete` will attempt to prefix whatever is
+					// passed as `key`; so, we need to unprefix the raw key
+					// before we call `delete`.
+					this.delete(this._getKeyUnprefix(key));
 					continue;
 				}
 
